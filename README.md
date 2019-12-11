@@ -4,7 +4,7 @@
 ## Credits
 https://github.com/Uko-TAL/STE_FullScreen_MOD_Play
 
-The Artic Land (T.AL) 2019
+Uko from The Artic Land (T.AL) 2019
 
 Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
@@ -45,14 +45,19 @@ In order to easily test the replay, several source codes are provided in the **A
 
 Some may require more than 1MB of memory, it is recommended to use 2MB if you want to test all replay modes.
 
-red/green
-blue
-precompute (green) infos press space
+When you launch them, the screen will turn green while some computing is done, then some information will be displayed. Press space to hear the music !
+The red/green colours (not visible in fullscreen, they are before the top border) show the decoding of the song.
+The blue color show the mixing part.
 
-
+- MPFSCL.TOS: Fullscreen with classical replay mode + Volume
+- MPFSOV.TOS: Fullscreen with oversampling replay mode + Volume
+- MPFSEX.TOS: Fullscreen with extreme replay mode (no volume)
+- MPL.TOS: No fullscreen, with extreme replay mode + Volume
 
 ## Usage 
+I have coded these routines for my own purposes, but I thought that they could be useful for someone else, and so I have decided to share them.
 You are free to use these routines for your own productions, or to modify them as you want.
+There are certainly plenty of bugs, or improvements, feel free to contact me, or to update them if you need ! 
 
 ***Just be kind and mention the credits !***
 
