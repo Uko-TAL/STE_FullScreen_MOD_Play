@@ -23,7 +23,7 @@ This code allows to replay classical 4 voices (M.K.) modules. All effects are fa
 
 It supports all the STE DMA Replay Frequencies.
 
-And it provides several replay modes that have different usage constraints, going from slow (23% CPU @12.5 kHz, 46% @25 kz) but using few memory to very fast (4% CPU @12.5 kHz, 9% @25 kz) but using lot of memory and some replay constraints.
+And it provides several replay modes that have different usage constraints, going from slow (23% CPU @12.5 kHz, 46% @25 kHz) but using few memory to very fast (4% CPU @12.5 kHz, 9% @25 kHz) but using lot of memory and some replay constraints.
 
 For a given replay frequency and a given replay mode, the main part of the replay routine has fixed execution CPU time.
 
