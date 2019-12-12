@@ -1,5 +1,5 @@
 ; Sub routines to play MODs on STE specially conceived for fullscreen demos
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 ;
 ; You are free to use these routines for your own productions, or to modify them as you want
