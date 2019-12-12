@@ -4,7 +4,7 @@
 ## Credits
 https://github.com/Uko-TAL/STE_FullScreen_MOD_Play
 
-Uko from The Artic Land (T.AL) 2019
+Uko from The Arctic Land (T.AL) 2019
 
 Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
