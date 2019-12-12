@@ -1,6 +1,6 @@
 ; STE MOD Player Example
 ; DO NOT FORGET to update the sizing of mp_buffer according to mp_init_song_debug displayed results
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
 	OUTPUT MPL.TOS

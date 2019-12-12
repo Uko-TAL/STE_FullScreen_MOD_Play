@@ -1,5 +1,5 @@
 ; Sub routines to save an restore the system
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; (from init030.s done by zpk of T.AL in 1994, and found back in a Faucontact mag !)
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 

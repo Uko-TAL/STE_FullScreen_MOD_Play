@@ -3,7 +3,7 @@
 ; The integration within the fullscreen core is of course not optimal here, and macro provided as examples
 ; should be split to avoid letting nops unused in each scanline !
 ; DO NOT FORGET to update the sizing of mp_buffer according to mp_init_song_debug displayed results
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
 	OUTPUT MPFSOV.TOS

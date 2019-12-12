@@ -8,7 +8,7 @@
 ; but I must admit it finally looks like very much to Evil's code !
 ; I have also done routines for Full Timer A overscan, but not enough CPU left, so it is not
 ; included here. I talk a little more about it in http://www.atari-forum.com/viewtopic.php?t=5423  
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
 

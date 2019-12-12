@@ -1,5 +1,5 @@
 ; Symbols for HW and functions
-; The Artic Land (T.AL) 2019
+; The Arctic Land (T.AL) 2019
 ; Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
 ; Hardware
