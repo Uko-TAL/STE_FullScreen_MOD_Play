@@ -4,7 +4,7 @@
 ## Credits
 https://github.com/Uko-TAL/STE_FullScreen_MOD_Play
 
-Uko from The Arctic Land (T.AL) 2019
+Uko from The Arctic Land (T.AL) 2019-2020
 
 Contact: uko.tal@gmail.com or uko at http://www.atari-forum.com
 
@@ -60,6 +60,11 @@ You are free to use these routines for your own productions, or to modify them a
 There are certainly plenty of bugs, or improvements, feel free to contact me, or to update them if you need ! 
 
 ***Just be kind and mention the credits !***
+
+## Updates
+- 2019/12/23-FIX: In classical mode, samples with length in bytes > word size were cut...  
+- 2020/01/04: Add the MP_STE_FRQ parameter to slightly shift the notes replay frequencies so as to be multiple of STE frequencies
+- 2020/12/23-FIX: In Extreme mode, there was a little scratch for the first loop of an instrument
 
 
 # Enjoy !

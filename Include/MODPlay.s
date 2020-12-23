@@ -239,10 +239,21 @@
 ; But it is also easy to integrate in a fullscreen code !
 ; 
 ;
+; ----------------------------------------------------------------
+; MISC
+; ----------------------------------------------------------------
+; Using the AMIGA frequencies tables conversion, there is no note which replay frequency is exactly one of the STE DMA
+; replay frequencies. If one has a sample which contains not a simple instrument but a music loop, there will be glitches
+; unless having a 50kHz replay frequency. I have therefore generated tables which allow this. This only imply a few
+; hertz of shifting, but it will greatly increase the sound quality ! The corresponding note is G-1 @ 6kHz, G-2 @ 12kHz
+; and G-3 above.  This facility can be used by setting the MP_STE_FRQ variable (not set by default)
 ;
-;
-
-
+; ----------------------------------------------------------------
+; Changes:
+; 2019/12/23-FIX: In classical mode, samples with length in bytes > word size were cut...  
+; 2020/01/04: Add the MP_STE_FRQ parameter to slightly shift the notes replay frequencies so as to be multiple
+;             of STE frequencies (see MISC chapter)
+; 2020/12/23-FIX: In Extreme mode, there was a little scratch for the first loop of an instrument
 
 
 ; -----------------------------------------------------------------------------
@@ -258,6 +269,8 @@
 ;	  4=Extreme no volume, 5=Extreme with volume
 ;	  6=check (debug))
 ; MP_MODE 	equ 0
+; (Optional) Force the note replay frequencies to be adjusted vs STE Replay frequencies
+; MP_STE_FRQ	equ 1 
 
 ; -----------------------------------------------------------------------------
 
@@ -355,6 +368,11 @@ mp_msg_mode	dc.b "Mode: Standard (No volume)",$a,$d,0
 ; To add some interpolation in Oversampling mode (for frequencies higher than the replay one)
 MP_INTERPOLATE	equ 1
 	
+; Force STE Replay Frequency
+	ifnd MP_STE_FRQ
+MP_STE_FRQ	equ 0
+	endif
+	
 ; -----------------------------------------------------------------------------
 ; Internal Buffer description
 ; First Samples table
@@ -397,12 +415,12 @@ MP_PAT_SO_LEN	equ MP_PATL_SO_LEN*64
 ; -----------------------------------------------------------------------------	
 ; Set the DMA frequency according to MP_PLAY_FRQ, and mode is STEREO
 ; \1 = register containing DMA Base address
-set_dma_stereo_frq macro 
+set_dma_stereo_frq: macro 
 	and.b #$7C,HW_SND_MODFRQ_O(\1)
 	or.b #MP_PLAY_FRQ,HW_SND_MODFRQ_O(\1)
 	endm
 	
-mpint_setval4chn macro
+mpint_setval4chn: macro
 	REPT 4
 	move.l \1,(\2)+
 	ENDR
@@ -420,7 +438,7 @@ mpint_setval4chn macro
 ; -----------------------------------------------------------------------------
 ; Initialise the DMA Sound, and the mix player parameters
 ; -----------------------------------------------------------------------------
-mp_init	lea HW_SND_ADR.w,a0
+mp_init:	lea HW_SND_ADR.w,a0
 	
 	; Infinite loop on buffer
 	move.l #mp_sndbuff,d0
@@ -497,7 +515,7 @@ mp_init	lea HW_SND_ADR.w,a0
 ; Returns:
 ; d0 = size of the buffer, or 0 if an error occured
 ; -----------------------------------------------------------------------------
-mp_init_song
+mp_init_song:
 	moveq #0,d0
 		
 	; Test the module type
@@ -662,7 +680,7 @@ mp_init_song
 ; d6 = Note dbf
 ; d7 = Sample dbf
 
-mpint_process_spl_per_note
+mpint_process_spl_per_note:
 	; Process the samples
 	lea MP_SPL_TBL_O(a1),a4	; Beginning of the buffer samples list desciption
 	moveq #31-1,d7		; Max number of samples
@@ -783,7 +801,6 @@ mpint_process_spl_per_note
 	
 	ifne MP_MOVEL
 	move.l a6,d3		; Set looping point multiple of 4
-	addq.l #3,d3
 	and.b #$FC,d3
 	move.l d3,a6
 	endif
@@ -845,7 +862,7 @@ mpint_process_spl_per_note
 ; a1 (I) = Address of the buffer
 ; a5 (IO) = Address in the source mod pointing to the sample data
 ; a6 (IO) = Address in the buffer where to copy sample data to
-mpint_process_spl_global
+mpint_process_spl_global:
 	; Process the samples
 	lea MP_SPL_TBL_O(a1),a4	; Beginning of the buffer samples list desciption
 	moveq #31-1,d7		; Max number of samples
@@ -873,13 +890,12 @@ mpint_process_spl_global
 	beq.s .noLoop
 	add.l d1,d2
 	move.l d2,d3		; Sample end = sample loop end
-	subq.l #1,d3
 	bra.s .copySample
 	
 .noLoop	move.l d4,d3
-	subq.l #1,d3
-	
-.copySample	move.b (a5)+,d5
+
+.copySample	add.l a5,d3	
+.copySampleByte	move.b (a5)+,d5
 	asr.b #1,d5
 	ifeq MP_DYN_VOL
 	move.l d5,a2
@@ -887,7 +903,8 @@ mpint_process_spl_global
 	else
 	move.b d5,(a6)+
 	endif
-	dbf d3,.copySample
+	cmp.l d3,a5
+	bls.s .copySampleByte	; do not use dbcc because it is word limited
 	
 	; Manage loop (cont'd) : Fills the buffer just after the sample with the begin of the loop
 	tst.l d1
@@ -942,7 +959,7 @@ mpint_process_spl_global
 ; http://www.atari-forum.com/viewtopic.php?f=68&t=24718
 ; It was useless to redo something that is already perfectly done !
 ; I only adapted the specific case of MP_MOVEL (6 bits unsigned case)
-mpint_make_voltab	
+mpint_make_voltab:	
 	lea mp_volume_tab,a0
 	move.l (a0),d0		; get pointer
 	andi.w #$ff00,d0	; clear low byte
@@ -1000,7 +1017,7 @@ mpint_make_voltab
 ; d5 = current row
 ; d6 = current speed
 ; d7 = current tick
-mpint_analyse_song
+mpint_analyse_song:
 	movem.l d0-d7/a0-a6,-(sp)
 
 	lea mp_buffer,a0
@@ -1075,7 +1092,7 @@ mpint_analyse_song_buff
 	ds.l 8	; 4L for sample addresses, and 4L for sample current duration
 
 ; Increase the durations, and check if current duration is maximum duration 
-mpint_analyse_song_process_durations
+mpint_analyse_song_process_durations:
 	movem.l d0-d1/d7/a0-a1,-(sp)
 	lea mpint_analyse_song_buff,a0
 	moveq #3,d7
@@ -1103,7 +1120,7 @@ mpint_analyse_song_process_durations
 ; Manages the error of mp_init_song
 ; or displays the required memory size for the buffer
 ; -----------------------------------------------------------------------------
-mp_init_song_debug
+mp_init_song_debug:
 	tst.l d0
 	beq .quit
 
@@ -1164,14 +1181,14 @@ mp_init_song_debug
 ; -----------------------------------------------------------------------------
 ; Hear that sound !
 ; -----------------------------------------------------------------------------
-mp_playtheblues	or.b #3,(HW_SND_ENABLE_O+HW_SND_ADR).w	; Start & Loop
+mp_playtheblues: or.b #3,(HW_SND_ENABLE_O+HW_SND_ADR).w	; Start & Loop
 	move.w #0,mp_curSlice	; Read is starting, logically with first slice
 	rts
 
 ; -----------------------------------------------------------------------------
 ; Read the pattern lines
 ; -----------------------------------------------------------------------------
-mp_read_song	lea mp_base,a0
+mp_read_song:	lea mp_base,a0
 	; We only read a row every curSpeed ticks
 	move.w (mp_curTick-mp_base)(a0),d7
 	bne .decreaseTick
@@ -1282,7 +1299,7 @@ mp_read_song	lea mp_base,a0
 ; Prepare the mix of samples. This sub shall contain all variable CPU time instructions
 ; Whereas mp_mix shall have a fixed duration
 ; -----------------------------------------------------------------------------
-mp_premix	lea mp_base,a0
+mp_premix:	lea mp_base,a0
 	moveq #0,d0
 
 	; Get the slice number inside the buffer
@@ -1424,7 +1441,7 @@ mp_premix	lea mp_base,a0
 ; No frequency shift
 ; 48 cycles per output buffer sample (stereo word) -> 10 samples per scanline 
 	ifeq MP_MODE-6
-mp_mix_check	; Get the Start Address
+mp_mix_check:	; Get the Start Address
 	lea mp_copySAddr,a0
 	move.l (a0)+,a1
 	move.l (a0)+,a2
@@ -2002,7 +2019,13 @@ mp_vol_tab	ds.w $4200/2
 
 ; -----------------------------------------------------------------------------	
 
+	ifeq MP_STE_FRQ
 	INCLUDE "MODFrqTable.s"
+	printt "MODPlay: Include AMIGA frequencies table"
+	else
+	INCLUDE "MODFrqTableSTE.s"
+	printt "MODPlay: Include STE frequencies table"
+	endif
 
 ; -----------------------------------------------------------------------------	
 
